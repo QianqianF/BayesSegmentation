@@ -1,2 +1,4 @@
 __pycache__/
 swag.egg-info/
+checkpoints/
+dataset/
