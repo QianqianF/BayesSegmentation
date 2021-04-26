@@ -179,7 +179,6 @@ with open(os.path.join(args.dir, "command.sh"), "w") as f:
 
 print("Using model %s" % args.model)
 model_cfg = getattr(models, args.model)
-
 loaders, num_classes = data.loaders(
     args.dataset,
     args.data_path,

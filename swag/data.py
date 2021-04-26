@@ -234,7 +234,7 @@ def loaders(
     shuffle_train=True,
     **kwargs
 ):
-
+    
     if dataset == "CamVid":
         return camvid_loaders(
             path,
@@ -246,6 +246,19 @@ def loaders(
             val_size=val_size,
             **kwargs
         )
+
+    
+    # if dataset == "Nuclei":
+    return nuclei_loaders(
+        path,
+        batch_size=batch_size,
+        num_workers=num_workers,
+        transform_train=transform_train,
+        transform_test=transform_test,
+        use_validation=use_validation,
+        val_size=val_size,
+        **kwargs
+    )
 
     path = os.path.join(path, dataset.lower())
 
