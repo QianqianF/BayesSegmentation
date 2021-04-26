@@ -4,8 +4,88 @@ import torchvision
 import os
 
 from .camvid import CamVid
+from .nuclei import Nuclei
 
 c10_classes = np.array([[0, 1, 2, 8, 9], [3, 4, 5, 6, 7]], dtype=np.int32)
+
+def nuclei_loaders(
+    path,
+    batch_size,
+    num_workers,
+    transform_train,
+    transform_test,
+    use_validation,
+    val_size,
+    shuffle_train=True,
+    joint_transform=None,
+    ft_joint_transform=None,
+    ft_batch_size=1,
+    **kwargs
+):
+
+    # load training and finetuning datasets
+    print(path)
+    train_set = Nuclei(
+        root=path,
+        split="train",
+        joint_transform=joint_transform,
+        transform=transform_train,
+        **kwargs
+    )
+    ft_train_set = Nuclei(
+        root=path,
+        split="train",
+        joint_transform=ft_joint_transform,
+        transform=transform_train,
+        **kwargs
+    )
+
+    val_set = Nuclei(
+        root=path, split="val", joint_transform=None, transform=transform_test, **kwargs
+    )
+    test_set = Nuclei(
+        root=path,
+        split="test",
+        joint_transform=None,
+        transform=transform_test,
+        **kwargs
+    )
+
+    num_classes = 2  # hard coded labels ehre
+
+    return (
+        {
+            "train": torch.utils.data.DataLoader(
+                train_set,
+                batch_size=batch_size,
+                shuffle=shuffle_train,
+                num_workers=num_workers,
+                pin_memory=True,
+            ),
+            "fine_tune": torch.utils.data.DataLoader(
+                ft_train_set,
+                batch_size=ft_batch_size,
+                shuffle=shuffle_train,
+                num_workers=num_workers,
+                pin_memory=True,
+            ),
+            "val": torch.utils.data.DataLoader(
+                val_set,
+                batch_size=batch_size,
+                shuffle=False,
+                num_workers=num_workers,
+                pin_memory=True,
+            ),
+            "test": torch.utils.data.DataLoader(
+                test_set,
+                batch_size=batch_size,
+                shuffle=False,
+                num_workers=num_workers,
+                pin_memory=True,
+            ),
+        },
+        num_classes,
+    )
 
 
 def camvid_loaders(
