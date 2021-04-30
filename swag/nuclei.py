@@ -139,18 +139,21 @@ class Nuclei(data.Dataset):
     def __getitem__(self, index):
         img_path, target_path = self.imgs[index], self.labels[index]
         img = self.loader(img_path)
-        target = self.loader(target_path)
-
+        target = self.loader(target_path).convert('L')
+        if self.split == "val":
+            print(img_path)
+            
         if self.joint_transform is not None:
             img, target = self.joint_transform(img, target)
 
         if self.transform is not None:
             img = self.transform(img)
 
+        target = np.array(target)
+        target = target == 255
         if self.target_transform is not None:
             target = self.target_transform(target)
 
-        print(img.size, target.size)
         return img, target
 
     def __len__(self):
