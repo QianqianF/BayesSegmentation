@@ -17,7 +17,7 @@ import torchvision.transforms as transforms
 
 from swag.models import tiramisu
 from swag import data, losses, models
-from utils.training import test
+from utils.training import test, view_sample_predictions
 
 from swag.posteriors import SWAG
 from swag.utils import adjust_learning_rate, bn_update
@@ -137,6 +137,9 @@ loss, err, mIOU, model_output_targets = test(
     return_scale=args.loss == "aleatoric",
 )
 print(loss, 1 - err, mIOU)
+
+# generate 5 sample predictions
+view_sample_predictions(model, test_loader, 5)
 
 outputs = np.concatenate(model_output_targets["outputs"])
 targets = np.concatenate(model_output_targets["targets"])

@@ -336,6 +336,9 @@ for epoch in range(start_epoch, args.epochs + 1):
             state_dict=model.state_dict(),
             optimizer=optimizer.state_dict(),
         )
+        print("SDG sample segmentation")
+        train_utils.view_sample_predictions(model, train_loader, 1)
+
         if args.swa and (epoch + 1) > args.swa_start:
             save_checkpoint(
                 dir=args.dir,
@@ -343,6 +346,8 @@ for epoch in range(start_epoch, args.epochs + 1):
                 name="swag",
                 state_dict=swag_model.state_dict(),
             )
+            print("SWAG sample segmentation")
+            train_utils.view_sample_predictions(swag_model, train_loader, 1)
 
     if args.optimizer == "RMSProp":
         ### Adjust Lr ###
@@ -369,10 +374,14 @@ if args.swa:
             test_loss, 1 - test_err, test_iou
         )
     )
+    train_utils.view_sample_predictions(swag_model, test_loader, 5)
+
 
 test_loss, test_err, test_iou = train_utils.test(model, loaders["test"], criterion)
 print(
     "SGD Test - Loss: {:.4f} | Acc: {:.4f} | IOU: {:.4f}".format(
         test_loss, 1 - test_err, test_iou
     )
+train_utils.view_sample_predictions(model, test_loader, 5)
+
 )
