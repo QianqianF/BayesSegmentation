@@ -177,3 +177,44 @@ def numpy_metrics(y_pred, y_true, n_classes=11, void_labels=[11]):
 
     accuracy = np.sum(I) / np.sum(not_void)
     return I, U, accuracy
+
+def eval_uncertaintry_metrics(y_pred, y_true, uncertainty_map, patch_size=7, acc_threshold=0.5, cert_threshold=0.4):
+    #TODO verify y_pred, y_true size and representation
+    # Assume y_pred (batch_size, num_classes, h, w) where h = w = 224
+    # y_true (batch_size, h, w)
+
+    batch_size, num_classes, w, h = y_pred.shape
+
+    # Put y_pred and y_true under the same shape
+    y_pred = np.argmax(y_pred, axis=1)
+    
+    acc_flag = y_pred == y_true
+    acc_grid = acc_flag.reshape(batch_size, w//patch_size, patch_size, h//patch_size, patch_size)
+    acc_grid = np.swapaxes(acc_grid, 2, 3).reshape(batch_size, -1, patch_size, patch_size)
+    _, num_patch, _, _ = acc_grid.shape
+    acc_rate = np.sum(np.sum(acc_grid, axis=2), axis=3)/(patch_size * patch_size) # (batch_size, w//patch_size * h//patch_size)
+
+    acc = acc_rate > acc_threshold
+    cert = uncertainty_map > cert_threshold
+
+    n_ac = np.sum(np.logical_and(acc, cert), axis=(1,2))
+    n_au = np.sum(np.logical_and(acc, np.logical_not(cert)), axis=(1,2))
+    n_ic = np.sum(np.logical_and(np.logical_not(acc), cert), axis=(1,2))
+    n_iu = np.sum(np.logical_and(np.logical_not(acc), np.logical_not(cert)), axis=(1,2))
+
+    p_a_c = n_ac/(n_ac + n_ic) # p(accurate|certain)
+    p_u_i = n_iu/(n_ic + n_iu) # p(uncertain|inaccurate)
+    pa_v_pu = (n_ac + n_iu)/num_patch # Patch Accuracy vs Patch Uncertainty
+
+    return p_a_c, p_u_i, pa_v_pu
+
+
+
+
+
+
+
+
+
+
+
