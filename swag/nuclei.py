@@ -140,8 +140,6 @@ class Nuclei(data.Dataset):
         img_path, target_path = self.imgs[index], self.labels[index]
         img = self.loader(img_path)
         target = self.loader(target_path).convert('L')
-        if self.split == "val":
-            print(img_path)
             
         if self.joint_transform is not None:
             img, target = self.joint_transform(img, target)
@@ -154,6 +152,10 @@ class Nuclei(data.Dataset):
         if self.target_transform is not None:
             target = self.target_transform(target)
 
+        # crop img and target to 256 * 256 (Hack)
+        img = img[:, :256, :256]
+        target = target[:256, :256]
+        
         return img, target
 
     def __len__(self):

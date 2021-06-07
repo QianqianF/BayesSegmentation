@@ -221,24 +221,24 @@ if args.loss == "cross_entropy":
 else:
     criterion = losses.seg_ale_cross_entropy
 
-if args.use_weights:
-    class_weights = torch.FloatTensor(
-        [
-            0.58872014284134,
-            0.51052379608154,
-            2.6966278553009,
-            0.45021694898605,
-            1.1785038709641,
-            0.77028578519821,
-            2.4782588481903,
-            2.5273461341858,
-            1.0122526884079,
-            3.2375309467316,
-            4.1312313079834,
-        ]
-    ).cuda()
+# if args.use_weights:
+#     class_weights = torch.FloatTensor(
+#         [
+#             0.58872014284134,
+#             0.51052379608154,
+#             2.6966278553009,
+#             0.45021694898605,
+#             1.1785038709641,
+#             0.77028578519821,
+#             2.4782588481903,
+#             2.5273461341858,
+#             1.0122526884079,
+#             3.2375309467316,
+#             4.1312313079834,
+#         ]
+#     ).cuda()
 
-    criterion = partial(criterion, weight=class_weights)
+#     criterion = partial(criterion, weight=class_weights)
 
 if args.resume is not None:
     print("Resume training from %s" % args.resume)
@@ -382,6 +382,6 @@ print(
     "SGD Test - Loss: {:.4f} | Acc: {:.4f} | IOU: {:.4f}".format(
         test_loss, 1 - test_err, test_iou
     )
+)
 train_utils.view_sample_predictions(model, test_loader, 5)
 
-)
