@@ -40,7 +40,8 @@ label_colours = np.array(
 
 
 def view_annotated(tensor, plot=True):
-    temp = tensor.numpy()
+#     temp = tensor.numpy()
+    temp = tensor
     r = temp.copy()
     g = temp.copy()
     b = temp.copy()
