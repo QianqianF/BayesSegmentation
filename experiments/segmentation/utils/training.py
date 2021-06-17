@@ -179,7 +179,7 @@ def numpy_metrics(y_pred, y_true, n_classes=11, void_labels=[11]):
     return I, U, accuracy
 
 def eval_uncertaintry_metrics(y_pred, y_true, uncertainty_map, patch_size=7, acc_threshold=0.5, cert_threshold=0.4):
-    #TODO verify y_pred, y_true size and representation
+    # TODO verify y_pred, y_true size and representation
     # Assume y_pred (batch_size, num_classes, h, w) where h = w = 224
     # y_true (batch_size, h, w)
 
